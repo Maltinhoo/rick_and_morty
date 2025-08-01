@@ -31,14 +31,22 @@ class CharacterCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: CustomImage(
+                if (kIsWeb)
+                  Expanded(
+                    child: CustomImage(
+                      height: 220,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      image: char.imageUrl,
+                    ),
+                  )
+                else
+                  CustomImage(
                     height: 220,
                     width: double.infinity,
                     fit: BoxFit.cover,
                     image: char.imageUrl,
                   ),
-                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     vertical: 20,
