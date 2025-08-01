@@ -18,7 +18,7 @@ void main() {
       rootWidget(
         CustomText(
           'Texto Padrão',
-          color: AppColors.label,
+          color: AppColors.black,
           fontWeight: FontWeight.bold,
           key: key,
         ),
