@@ -28,13 +28,35 @@ class _HomePageState extends State<HomePage> {
                 onRefresh: () async {
                   await homeCubit.refresh();
                 },
+
                 child: CustomScrollView(
                   slivers: [
-                    if (state is! HomeError)
+                    if (kIsWeb)
+                      SliverToBoxAdapter(
+                        child: Container(
+                          height: 350,
+                          color: Color(0xff181A1B),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Vector(Vectors.rick_morty, color: Colors.white),
+                              CustomText(
+                                'The Rick and Morty API',
+                                color: Color(0xffD1CDC7),
+                                size: 100,
+                                margin: EdgeInsets.all(20),
+                                textAlign: TextAlign.center,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                    if (!kIsWeb && state is! HomeError)
                       SliverAppBar(
                         floating: true,
                         expandedHeight: 80,
-
                         flexibleSpace: FlexibleSpaceBar(
                           background: Padding(
                             padding: const EdgeInsets.only(
@@ -65,19 +87,12 @@ class _HomePageState extends State<HomePage> {
                                             'selectedStatus': state.status,
                                           },
                                         );
-
                                     if (result != null) {
-                                      final gender =
-                                          result['gender'] as GenderEnum?;
-                                      final species =
-                                          result['species'] as SpeciesEnum?;
-                                      final status =
-                                          result['status'] as StatusEnum?;
-
                                       homeCubit.filterCharacters(
-                                        gender: gender,
-                                        specie: species,
-                                        status: status,
+                                        gender: result['gender'] as GenderEnum?,
+                                        specie:
+                                            result['species'] as SpeciesEnum?,
+                                        status: result['status'] as StatusEnum?,
                                       );
                                     }
                                   },
@@ -91,7 +106,68 @@ class _HomePageState extends State<HomePage> {
                         collapsedHeight: 80,
                       ),
 
-                    if (state is HomeLoaded)
+                    if (kIsWeb && state is HomeLoaded)
+                      SliverToBoxAdapter(
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            const maxItemWidth = 350.0;
+                            const maxPadding = 100.0;
+                            const minPadding = 16.0;
+
+                            final width = constraints.maxWidth;
+
+                            // Define quantas colunas cabem
+                            final crossAxisCount = (width / maxItemWidth)
+                                .floor()
+                                .clamp(1, 6);
+
+                            // Padding adaptável: proporcional à largura da tela
+                            final horizontalPadding = (width * 0.05).clamp(
+                              minPadding,
+                              maxPadding,
+                            );
+                            final verticalPadding = (width * 0.05).clamp(
+                              minPadding,
+                              maxPadding,
+                            );
+
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: horizontalPadding,
+                                vertical: verticalPadding,
+                              ),
+                              child: PagedGridView(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                state: state.pagingState,
+                                fetchNextPage: homeCubit.fetchNextPage,
+                                builderDelegate:
+                                    PagedChildBuilderDelegate<CharacterEntity>(
+                                      itemBuilder: (context, char, index) {
+                                        return CharacterCard(
+                                          char: char,
+                                          onTap: (p0) {
+                                            context.push(
+                                              CharacterPage.name,
+                                              extra: {'char': char},
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: crossAxisCount,
+                                      crossAxisSpacing: 20,
+                                      mainAxisSpacing: 20,
+                                    ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
+                    if (!kIsWeb && state is HomeLoaded)
                       SliverPadding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         sliver: PagedSliverList<int, CharacterEntity>.separated(
@@ -111,12 +187,11 @@ class _HomePageState extends State<HomePage> {
                                   );
                                 },
                               ),
-                          separatorBuilder: (BuildContext context, int index) {
-                            return const Gap(20);
-                          },
+                          separatorBuilder: (_, __) => const Gap(20),
                         ),
                       ),
 
+                    // Error fallback
                     if (state is HomeError)
                       SliverFillRemaining(
                         hasScrollBody: false,

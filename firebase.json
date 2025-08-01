@@ -1,0 +1,33 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "rick-and-morty-2c88e",
+          "appId": "1:567009306845:android:df1fb89081b01343f39334",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "rick-and-morty-2c88e",
+          "configurations": {
+            "android": "1:567009306845:android:df1fb89081b01343f39334",
+            "ios": "1:567009306845:ios:7db734fcdf41726ff39334",
+            "web": "1:567009306845:web:1cc52327918749a5f39334"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

@@ -31,11 +31,13 @@ class CharacterCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomImage(
-                  height: 220,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  image: char.imageUrl,
+                Expanded(
+                  child: CustomImage(
+                    height: 220,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    image: char.imageUrl,
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
@@ -47,6 +49,7 @@ class CharacterCard extends StatelessWidget {
                     children: [
                       CustomText(
                         char.name,
+                        maxLines: 1,
                         fontWeight: FontWeight.w800,
                         size: 28,
                       ),
